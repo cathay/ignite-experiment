@@ -1,0 +1,15 @@
+node_modules
+dist
+compress
+aws.json
+
+#IntelliJ Idea
+.idea
+.project
+*.iml
+
+#Node Js
+package-lock.json
+
+/target
+dependency-reduced-pom.xml
