@@ -4,6 +4,7 @@ import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Morphia;
 import com.google.code.morphia.converters.DefaultConverters;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.IgniteLogger;
 import org.apache.ignite.cache.store.CacheStoreAdapter;
@@ -35,13 +36,15 @@ public class EventCacheStore extends CacheStoreAdapter<String, Event> implements
 
         System.out.println("EventCacheStore.......");
 
-        MongoClient mongo = new MongoClient("127.0.0.1", MONGOD_PORT);
+        MongoClientURI uri = new MongoClientURI("mongodb://userkit-staging:userkit-pwd@54.169.112.195:27017/userkit");
+
+        MongoClient mongo = new MongoClient(uri);
 
         Set<Class> clss = new HashSet<>();
         Collections.addAll(clss, Event.class);
 
         System.out.println("Morphia started...");
-        morphia = new Morphia(clss).createDatastore(mongo, "test");
+        morphia = new Morphia(clss).createDatastore(mongo, "userkit");
     }
 
     /** {@inheritDoc} */

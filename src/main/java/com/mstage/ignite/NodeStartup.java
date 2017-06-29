@@ -8,7 +8,7 @@ import org.apache.ignite.Ignition;
 public class NodeStartup {
     public static void main(String []args) {
 
-        Ignite ignite = Ignition.start("examples/config/example-cache.xml");
+        Ignite ignite = Ignition.start("config/cache.xml");
         IgniteCache<String, Event> events = ignite.cache("events");
         events.loadCache(null);
     }

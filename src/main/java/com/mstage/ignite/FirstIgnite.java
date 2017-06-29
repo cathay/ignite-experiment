@@ -25,7 +25,7 @@ public class FirstIgnite {
         Ignition.setClientMode(true);
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         System.out.println(sdfDate.parse("2017-06-21T07:54:12.469Z").equals(sdfDate.parse("2017-06-21T07:54:12.469Z")));
-        try (Ignite ignite = Ignition.start("examples/config/example-cache.xml")) {
+        try (Ignite ignite = Ignition.start("config/cache.xml")) {
 
             CacheConfiguration<String, Event> cfg = new CacheConfiguration<>();
 
@@ -41,8 +41,8 @@ public class FirstIgnite {
             IgniteCache<String, Event> events = ignite.cache("events");
 
             //System.out.println(events.get("59533286119ab725e67d87ac").getCreatedAtDate().equals(sdfDate.parse("2017-06-21T07:54:12.469Z")));
-            System.out.println(events.get("5953325e119ab725e67d8799"));
-            System.out.println(events.get("595336e3119ab725e67d8a3b"));
+            System.out.println(events.get("595462abfc5992486c0e9856"));
+            System.out.println(events.get("5954629cfc5992486c0e9855"));
             System.out.println("............");
 
             SqlQuery sql = new SqlQuery<Long,Event>(Event.class, "createdAtDate = ?");
