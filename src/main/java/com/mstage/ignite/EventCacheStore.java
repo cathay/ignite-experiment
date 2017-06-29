@@ -36,7 +36,7 @@ public class EventCacheStore extends CacheStoreAdapter<String, Event> implements
 
         System.out.println("EventCacheStore.......");
 
-        MongoClientURI uri = new MongoClientURI();
+        MongoClientURI uri = new MongoClientURI("");
 
         MongoClient mongo = new MongoClient(uri);
 

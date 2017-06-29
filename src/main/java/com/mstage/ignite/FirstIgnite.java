@@ -3,6 +3,8 @@ package com.mstage.ignite;
 
 import javax.cache.Cache;
 import javax.cache.configuration.FactoryBuilder;
+
+import com.mstage.ignite.utils.DateTimeUtils;
 import org.apache.ignite.*;
 import org.apache.ignite.cache.*;
 import org.apache.ignite.cache.affinity.AffinityKey;
@@ -23,8 +25,6 @@ public class FirstIgnite {
     public static void main(String []args) throws ParseException{
 
         Ignition.setClientMode(true);
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        System.out.println(sdfDate.parse("2017-06-21T07:54:12.469Z").equals(sdfDate.parse("2017-06-21T07:54:12.469Z")));
         try (Ignite ignite = Ignition.start("config/cache.xml")) {
 
             CacheConfiguration<String, Event> cfg = new CacheConfiguration<>();
@@ -47,7 +47,7 @@ public class FirstIgnite {
 
             SqlQuery sql = new SqlQuery<Long,Event>(Event.class, "createdAtDate = ?");
 
-            try (QueryCursor<Cache.Entry<Long, Event>> cursor = events.query(sql.setArgs(sdfDate.parse("2017-06-21T07:54:12.469Z")))) {
+            try (QueryCursor<Cache.Entry<Long, Event>> cursor = events.query(sql.setArgs(DateTimeUtils.parseDate("2017-06-29T03:09:48.668Z")))) {
                 for (Cache.Entry<Long, Event> e : cursor)
                     System.out.println(e.getValue());
             }
