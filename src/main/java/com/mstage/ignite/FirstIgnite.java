@@ -41,7 +41,7 @@ public class FirstIgnite {
             IgniteCache<String, Event> events = ignite.cache("events");
 
             //System.out.println(events.get("59533286119ab725e67d87ac").getCreatedAtDate().equals(sdfDate.parse("2017-06-21T07:54:12.469Z")));
-            System.out.println(events.get("595462abfc5992486c0e9856"));
+            System.out.println(events.get("59546f81fc5992486c0e9872"));
             System.out.println(events.get("5954629cfc5992486c0e9855"));
             System.out.println("............");
 

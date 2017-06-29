@@ -5,6 +5,7 @@ import com.google.code.morphia.annotations.Converters;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Property;
+import com.mstage.ignite.utils.DateTimeUtils;
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
 import org.bson.types.ObjectId;
 
@@ -55,15 +56,7 @@ public class Event implements Serializable{
         }
 
         if(createdAtDate == null) {
-            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            try {
-                System.out.println(createdAt+"...........");
-                createdAtDate = sdfDate.parse(createdAt);
-            } catch (ParseException e) {
-                //TODO Handle this exception
-                e.printStackTrace();
-                createdAtDate = new Date(0);
-            }
+            return DateTimeUtils.parseDate(createdAt);
         }
         return createdAtDate;
     }
