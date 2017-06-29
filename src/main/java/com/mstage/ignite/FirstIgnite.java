@@ -4,7 +4,7 @@ package com.mstage.ignite;
 import javax.cache.Cache;
 import javax.cache.configuration.FactoryBuilder;
 
-import com.mstage.ignite.cache.events.MstageEvent;
+import com.mstage.ignite.cache.model.MstageEvent;
 import com.mstage.ignite.cache.store.MstageEventCacheStore;
 import com.mstage.ignite.cache.store.EventCacheStore;
 import com.mstage.ignite.utils.DateTimeUtils;
@@ -30,8 +30,9 @@ public class FirstIgnite {
             IgniteCache<String, MstageEvent> events = ignite.getOrCreateCache(createContentConsumedEventStoreCfg("events"));
             //IgniteCache<String, Event> events = ignite.cache("events");
 
+            events.loadCache(null, 1);
             //String id ="5953325e119ab725e67d8799";
-            String id ="595474a8fc5992486c0e987d";
+            String id ="595462abfc5992486c0e9856";
             MstageEvent event = events.get(id);
             System.out.println(event);
 
@@ -41,10 +42,13 @@ public class FirstIgnite {
            // events.put("595474a8fc5992486c0e987d", event);
 
 
-            SqlQuery sql = new SqlQuery<Long,MstageEvent>(MstageEvent.class, "createdAt = ?");
+            SqlQuery sql = new SqlQuery<String,MstageEvent>(MstageEvent.class, "createdAt < ? AND createdAt > ?");
 
-            try (QueryCursor<Cache.Entry<Long, Event>> cursor = events.query(sql.setArgs(DateTimeUtils.parseDate("2017-06-29T03:31:46.989Z")))) {
-                for (Cache.Entry<Long, Event> e : cursor)
+            try (QueryCursor<Cache.Entry<String, MstageEvent>> cursor = events.query(sql.setArgs(
+                    DateTimeUtils.parseDate("2017-06-29T09:31:46.989Z"),
+                    DateTimeUtils.parseDate("2017-06-21T03:31:46.989Z")))) {
+                System.out.println("Tao ne");
+                for (Cache.Entry<String, MstageEvent> e : cursor)
                     System.out.println(e.getValue());
             }
 

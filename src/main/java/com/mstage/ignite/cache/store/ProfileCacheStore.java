@@ -1,31 +1,30 @@
 package com.mstage.ignite.cache.store;
 
-import com.mongodb.*;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoIterable;
-import com.mstage.ignite.cache.model.MstageEvent;
+import com.mstage.ignite.cache.model.Profile;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.IgniteLogger;
 import org.apache.ignite.cache.store.CacheStoreAdapter;
-import org.apache.ignite.lang.IgniteBiInClosure;
 import org.apache.ignite.lifecycle.LifecycleAware;
 import org.apache.ignite.resources.LoggerResource;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 
 import javax.cache.Cache;
 import javax.cache.integration.CacheLoaderException;
 import javax.cache.integration.CacheWriterException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mstage.ignite.cache.model.MstageEvent.TABLE_NAME;
+import static com.mstage.ignite.cache.model.Profile.TABLE_NAME;
 
-
-public class MstageEventCacheStore extends CacheStoreAdapter<String, MstageEvent> implements LifecycleAware {
+//FIXME This class should refactored along with <class>MstageEventCacheStore</class>
+public class ProfileCacheStore extends CacheStoreAdapter<String, Profile> implements LifecycleAware {
     /** MongoDB port. */
     private static final int MONGOD_PORT = 27017;
 
@@ -42,13 +41,11 @@ public class MstageEventCacheStore extends CacheStoreAdapter<String, MstageEvent
         System.out.println("MstageEventCacheStore.......");
 
         MongoClientURI uri = new MongoClientURI("mongodb://userkit-staging:userkit-pwd@54.169.112.195:27017/userkit");
-        //mongoClient = new MongoClient("127.0.0.1", MONGOD_PORT);
-        //db = mongoClient.getDatabase("test");
         mongoClient = new MongoClient(uri);
         db = mongoClient.getDatabase("userkit");
 
         Set<Class> clss = new HashSet<>();
-        Collections.addAll(clss, MstageEvent.class);
+        Collections.addAll(clss, Profile.class);
     }
 
     /** {@inheritDoc} */
@@ -56,65 +53,34 @@ public class MstageEventCacheStore extends CacheStoreAdapter<String, MstageEvent
     public void stop() throws IgniteException {
     }
 
-    @Override
-    public void loadCache(final IgniteBiInClosure<String, MstageEvent> clo, Object... args) {
-        if (args == null || args.length == 0 || args[0] == null)
-            throw new CacheLoaderException("Expected a limit months of data is not provided.");
-
-        int month = (Integer)args[0];
-
-        Date now = new Date();
-        Date fromDate = new DateTime().minusMonths(month).toDate();
-
-        System.out.println(now);
-        System.out.println(fromDate);
-
-        BasicDBObject query = new BasicDBObject();
-        query.put("createdAt", BasicDBObjectBuilder.start("$gte", fromDate).add("$lte", now));
-
-        System.out.println("loadCache....");
-        
-        //TODO Need to use lamda with Java-8
-        getCollection().find(query).map(new Function<Document, MstageEvent>() {
-
-            @Override
-            public MstageEvent apply(Document document) {
-               MstageEvent event =  createEvent(document);
-               System.out.println(event);
-               clo.apply(event.getId(), event);
-               return event;
-            }
-        });
-
-
-    }
-
     /** {@inheritDoc} */
     @Override
-    public MstageEvent load(String key) throws CacheLoaderException {
+    public Profile load(String key) throws CacheLoaderException {
         System.out.println("..........");
         System.out.println(findById(key));
         System.out.println("..........");
 
-        return createEvent(findById(key));
+        return createProfile(findById(key));
     }
 
-    private static MstageEvent createEvent(Document document) {
+    private static Profile createProfile(Document document) {
         if(document == null)
             return null;
 
         //TODO Need to exact field names for maintenance purpose
-        MstageEvent event = new MstageEvent(
+        Profile profile = new Profile(
                 document.get("_id").toString(),
                 document.getString("_country"),
                 document.getDate("createdAt"),
-                document.getString("name"),
+                document.getString("firstName"),
+                document.getString("lastName"),
+                document.getInteger("age"),
+                document.get("account_id").toString(),
                 document.get("project_id").toString(),
-                document.get("profile_id").toString(),
                 document
         );
 
-        return event;
+        return profile;
     }
 
     private MongoCollection<Document> getCollection() {
@@ -127,7 +93,7 @@ public class MstageEventCacheStore extends CacheStoreAdapter<String, MstageEvent
 
     /** {@inheritDoc} */
     @Override
-    public void write(Cache.Entry<? extends String, ? extends MstageEvent> e) throws CacheWriterException {
+    public void write(Cache.Entry<? extends String, ? extends Profile> e) throws CacheWriterException {
 
         System.out.println(".......write:"+ e.getValue().getDocument());
         Document document = findById(e.getKey());
