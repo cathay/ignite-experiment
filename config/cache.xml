@@ -41,7 +41,7 @@
 
         <property name="cacheConfiguration">
             <list>
-                <!-- Partitioned cache example configuration (Atomic mode). -->
+                <!--
                 <bean id="projects" class="org.apache.ignite.configuration.CacheConfiguration">
                     <property name="cacheStoreFactory">
                         <bean class="javax.cache.configuration.FactoryBuilder" factory-method="factoryOf">
@@ -71,21 +71,19 @@
                 <bean id="events" class="org.apache.ignite.configuration.CacheConfiguration">
                     <property name="cacheStoreFactory">
                         <bean class="javax.cache.configuration.FactoryBuilder" factory-method="factoryOf">
-                            <constructor-arg value="com.mstage.ignite.EventCacheStore"/>
+                            <constructor-arg value="com.mstage.ignite.cache.store.EventCacheStore"/>
                         </bean>
                     </property>
                     <property name="queryEntities">
                         <list>
                             <bean class="org.apache.ignite.cache.QueryEntity">
-                                <!-- Setting indexed type's key class -->
+
                                 <property name="keyType" value="java.lang.String"/>
 
-                                <!-- Setting indexed type's value class -->
+
                                 <property name="valueType"
                                           value="com.mstage.ignite.Event"/>
 
-                                <!-- Defining fields that will be either indexed or queryable.
-                                Indexed fields are added to 'indexes' list below.-->
                                 <property name="fields">
                                     <map>
                                         <entry key="createdAt" value="java.lang.String"/>
@@ -102,7 +100,7 @@
                     <property name="readThrough" value="true"/>
                     <property name="writeThrough" value="true"/>
                 </bean>
-
+                -->
             </list>
         </property>
 

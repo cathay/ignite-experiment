@@ -4,21 +4,17 @@ package com.mstage.ignite;
 import javax.cache.Cache;
 import javax.cache.configuration.FactoryBuilder;
 
+import com.mstage.ignite.cache.events.MstageEvent;
+import com.mstage.ignite.cache.store.MstageEventCacheStore;
+import com.mstage.ignite.cache.store.EventCacheStore;
 import com.mstage.ignite.utils.DateTimeUtils;
 import org.apache.ignite.*;
 import org.apache.ignite.cache.*;
-import org.apache.ignite.cache.affinity.AffinityKey;
 import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.SqlQuery;
 import org.apache.ignite.configuration.*;
-import org.bson.types.ObjectId;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 public class FirstIgnite {
 
@@ -27,27 +23,24 @@ public class FirstIgnite {
         Ignition.setClientMode(true);
         try (Ignite ignite = Ignition.start("config/cache.xml")) {
 
-            CacheConfiguration<String, Event> cfg = new CacheConfiguration<>();
+            //IgniteCache<String, Event> events = ignite.getOrCreateCache(createEventStoreCfg("events"));
+            IgniteCache<String, MstageEvent> events = ignite.getOrCreateCache(createContentConsumedEventStoreCfg("events"));
+            //IgniteCache<String, Event> events = ignite.cache("events");
 
-            cfg.setName("events");
-            cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
-            cfg.setCacheStoreFactory(FactoryBuilder.factoryOf(EventCacheStore.class));
-            cfg.setIndexedTypes(String.class, Event.class);
-            cfg.setWriteThrough(true);
-            cfg.setReadThrough(true);
+            //String id ="5953325e119ab725e67d8799";
+            String id ="595474a8fc5992486c0e987d";
+            MstageEvent event = events.get(id);
+            System.out.println(event);
 
-
-            //IgniteCache<String, Event> events = ignite.getOrCreateCache(cfg);
-            IgniteCache<String, Event> events = ignite.cache("events");
-
-            //System.out.println(events.get("59533286119ab725e67d87ac").getCreatedAtDate().equals(sdfDate.parse("2017-06-21T07:54:12.469Z")));
-            System.out.println(events.get("59546f81fc5992486c0e9872"));
-            System.out.println(events.get("5954629cfc5992486c0e9855"));
+            //FIXME Don't try on staging data
+            //event.setCountry("VN");
+            //events.getAndReplace(id, event);
+           // events.put("595474a8fc5992486c0e987d", event);
             System.out.println("............");
 
-            SqlQuery sql = new SqlQuery<Long,Event>(Event.class, "createdAtDate = ?");
+            SqlQuery sql = new SqlQuery<Long,MstageEvent>(MstageEvent.class, "createdAt = ?");
 
-            try (QueryCursor<Cache.Entry<Long, Event>> cursor = events.query(sql.setArgs(DateTimeUtils.parseDate("2017-06-29T03:09:48.668Z")))) {
+            try (QueryCursor<Cache.Entry<Long, Event>> cursor = events.query(sql.setArgs(DateTimeUtils.parseDate("2017-06-29T03:31:46.989Z")))) {
                 for (Cache.Entry<Long, Event> e : cursor)
                     System.out.println(e.getValue());
             }
@@ -55,6 +48,32 @@ public class FirstIgnite {
         } catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    //FIXME Move these to abstract class
+    public static CacheConfiguration createEventStoreCfg(String cacheName) {
+        CacheConfiguration<String, Event> cfg = new CacheConfiguration<>();
+
+        cfg.setName(cacheName);
+        cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+        cfg.setCacheStoreFactory(FactoryBuilder.factoryOf(EventCacheStore.class));
+        cfg.setIndexedTypes(String.class, Event.class);
+        cfg.setWriteThrough(true);
+        cfg.setReadThrough(true);
+        return cfg;
+    }
+
+    public static CacheConfiguration createContentConsumedEventStoreCfg(String cacheName) {
+        CacheConfiguration<String, MstageEvent> cfg = new CacheConfiguration<>();
+
+        cfg.setName(cacheName);
+        cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+        cfg.setCacheStoreFactory(FactoryBuilder.factoryOf(MstageEventCacheStore.class));
+        cfg.setIndexedTypes(String.class, MstageEvent.class);
+        cfg.setWriteThrough(true);
+        cfg.setWriteBehindEnabled(true);
+        cfg.setReadThrough(true);
+        return cfg;
     }
 
     private static void sqlQuery() {

@@ -10,6 +10,6 @@ public class NodeStartup {
 
         Ignite ignite = Ignition.start("config/cache.xml");
         IgniteCache<String, Event> events = ignite.cache("events");
-        events.loadCache(null);
+//        events.loadCache(null);
     }
 }

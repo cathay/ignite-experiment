@@ -1,10 +1,11 @@
-package com.mstage.ignite;
+package com.mstage.ignite.cache.store;
 
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Morphia;
 import com.google.code.morphia.converters.DefaultConverters;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mstage.ignite.Event;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.IgniteLogger;
 import org.apache.ignite.cache.store.CacheStoreAdapter;
@@ -36,7 +37,7 @@ public class EventCacheStore extends CacheStoreAdapter<String, Event> implements
 
         System.out.println("EventCacheStore.......");
 
-        MongoClientURI uri = new MongoClientURI("");
+        MongoClientURI uri = new MongoClientURI("mongodb://userkit-staging:userkit-pwd@54.169.112.195:27017/userkit");
 
         MongoClient mongo = new MongoClient(uri);
 
