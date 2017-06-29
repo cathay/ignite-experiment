@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class DateTimeUtils {
 
-    private static final String [] DATE_FORMAT = {
+    private static final String[] DATE_FORMAT = {
             "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
             "yyyy-MM-dd HH:mm:ss.SSS'Z'"
     };
@@ -20,7 +20,7 @@ public class DateTimeUtils {
         int i = 0;
         while (i < DATE_FORMAT.length) {
             try {
-                return parseDate(date,i);
+                return parseDate(date, i);
             } catch (ParseException e) {
                 i++;
             }
@@ -29,7 +29,7 @@ public class DateTimeUtils {
     }
 
     private static Date parseDate(String date, int dateFormatIndex) throws ParseException {
-        if(dateFormatIndex ==  DATE_FORMAT.length)
+        if (dateFormatIndex == DATE_FORMAT.length)
             return new Date(0);
 
         SimpleDateFormat sdfDate = new SimpleDateFormat(DATE_FORMAT[dateFormatIndex]);

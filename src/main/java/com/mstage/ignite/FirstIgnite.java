@@ -21,7 +21,10 @@ public class FirstIgnite {
     public static void main(String []args) throws ParseException{
 
         Ignition.setClientMode(true);
+
         try (Ignite ignite = Ignition.start("config/cache.xml")) {
+
+            CacheConfiguration<String, Event> cfg = new CacheConfiguration<>();
 
             //IgniteCache<String, Event> events = ignite.getOrCreateCache(createEventStoreCfg("events"));
             IgniteCache<String, MstageEvent> events = ignite.getOrCreateCache(createContentConsumedEventStoreCfg("events"));
@@ -36,7 +39,7 @@ public class FirstIgnite {
             //event.setCountry("VN");
             //events.getAndReplace(id, event);
            // events.put("595474a8fc5992486c0e987d", event);
-            System.out.println("............");
+
 
             SqlQuery sql = new SqlQuery<Long,MstageEvent>(MstageEvent.class, "createdAt = ?");
 
