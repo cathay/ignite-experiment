@@ -78,7 +78,7 @@ public class MstageEventCacheStore extends CacheStoreAdapter<String, MstageEvent
         MstageEvent event = new MstageEvent(
                 document.get("_id").toString(),
                 document.getString("_country"),
-                DateTimeUtils.parseDate(document.getString("createdAt")),
+                document.getDate("createdAt"),
                 document.getString("name"),
                 document.get("project_id").toString(),
                 document.get("profile_id").toString(),
