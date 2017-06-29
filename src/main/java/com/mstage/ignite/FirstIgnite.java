@@ -25,7 +25,7 @@ public class FirstIgnite {
         Ignition.setClientMode(true);
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         System.out.println(sdfDate.parse("2017-06-21T07:54:12.469Z").equals(sdfDate.parse("2017-06-21T07:54:12.469Z")));
-        try (Ignite ignite = Ignition.start("examples/config/example-cache.xml")) {
+        try (Ignite ignite = Ignition.start("examples/config/cache.xml")) {
 
             CacheConfiguration<String, Event> cfg = new CacheConfiguration<>();
 
